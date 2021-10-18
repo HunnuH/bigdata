@@ -30,6 +30,7 @@
         - `ssh "도메인명 "`
         - 호스트 파일을 다른 머신으로 복사
           - `scp /etc/hosts root@"도메인명":/etc/hosts`
+      - 네트워크 restart
   - 명령어
     - scp : 로컬  > 원격지 복사
     - cp : 로컬 > 로컬 복사
@@ -64,7 +65,14 @@
       - 3.x
   - ssh프로토콜로 암호통신을 할 수 있도록 설정하기
     - 하둡 내부에서 ssh통신을 하기 때문에 통신 할 수 있도록 설정
+    - 암호키를 생성하고 공용키만 각 머신에 배포
   - hadoop설정
+    - conf폴더의 설정파일을 셋팅
+    - 네임노드 초기화
+    - hadoop 실행
+      - start -all.sh
+    - 실행 후 데몬 확인
+      - jps
   - hadoop 프로그래밍
     - hdfs
     - mapreduce
@@ -75,3 +83,5 @@
     - hive
     - pig
     - mahout
+
+  
