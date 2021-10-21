@@ -76,6 +76,36 @@
   - hadoop 프로그래밍
     - hdfs
     - mapreduce
+      - 데이터를 분류하는역활
+      - mapper클래스를 상속한다,
+        - mapper로 전달될 input데이터의 key, value타입 mapper의 실행결과로 출력될 output데이터의 key와 value타입을 정의
+        - map메소드를 오버라이딩해서 map작업을 어떤 방식으로 처리할 것 인지 내용을 구현
+          - 입력된 값을 분석하기 위한 메소드 
+          - 입력된 데이터에 조건을 적용하여 원하는 데이터만 추출하기 위한 반복작업 수행
+        - map메소드의  매개변수
+          - 입력데이터 키, 입력값, context
+          - 맵리듀스 작업을 수행하며 맵메소드의 실행결과를 프레임워크 내부에서 처리하는 다른 컴포넌트로 전달
+          - 출력데이터를 기록하고 shuffle단으로 넘기고 리듀서로 내보내는 작업을 내부에서 처리할 객체 프레임워크 내부에서 기본작업을 처리하는 객체
+          - 내부에서 머신들끼리 통신할때 필요한 여러가지 정보를 갖고 있는 객체
+    - Reducer
+      - 데이터를 집계하는 역할
+      - Reducer클래스를 상속
+        - reducer로 전달되는 input데이터의 key,value타입 , Reducer의 실행결과로 출력될 output데이터의  key,value타입을 명시
+        - reduce메소드를 오버라이딩
+          - key,value,Context객체가 전달
+          - Mapper와 동일
+          - reducer로 전달되는 value의 타입이 Iterable`<IntWritable>`  Iterable 즉, 입력값들이 Iterable의 형태로 전달
+            -  {1,1,1,1,1,1,1,.....} 값에서 한 개의 value타입은 IntWritable이지만 여러 개가 전달되므로 반복작업을 수행해야 하고 여러 개가 전달되는 것을 Iterable의 형태로 전달받는다.
+    - Driver
+      - 맵리듀스를 실행하기 위한 작업을 처리하는 클래스
+      -  맵리듀스를 처리하기 위한  job을 생성
+      - 실제 job을 처리하기 위한 클래스가 어떤 클래스인지 등록
+        - Mapper, Reducer, Driver클래스가 어떤 클래스인지 우리가 작성한 클래스를 등록
+      - HDFS에서 읽고 쓸 input데이터와 output데이터의 포맷을 정의
+        - 텍스트 파일의 형태로 input/output형태로 처리
+      - 리듀서의 출력데이터에 대한 키와 value타입을 정의
+      - hdfs에 저장된 파일을 읽고 쓸 수 있도록 path를 정의
+      - job실행
     - customizing
   - hadoop eco system 설치 후 테스트
     - flume
@@ -83,5 +113,5 @@
     - hive
     - pig
     - mahout
-
+  
   
