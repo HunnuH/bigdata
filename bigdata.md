@@ -107,6 +107,47 @@
       - hdfs에 저장된 파일을 읽고 쓸 수 있도록 path를 정의
       - job실행
     - customizing
+    
+    - 사용자정의 옵션 활용
+      - Mapper 
+        - 환경설정 정보에서 사용자가 입력한 옵션정보를 읽기 위해서 setup메소드를 오버라이딩해서 처리
+        - map메소드 내부에서 값에 따라 다르게 동작할 수 있도록 구현
+      - Reducer
+        - 기존과 동일
+      - Driver
+        - 사용자가  -D옵션을 이용해서 입력한 옵션값을 프로그램 안에서 사용할 수 있도록 즉 ,Mapper가 사용할수 있도록 전달
+      - Configured(클래스)와 Tool(인터페이스)을 상속
+        - configured는 환경설정 정보를 활용해야 하므로
+        - tool은 사용자 정의 옵션을 사용하기 위해서
+        - 사용자가 입력한 옵션과 input/output 경로가 입력된 기존 명령형매개변수를 구분해서 전달해야 하므로
+      - run메소드를 오버라이딩
+        - run메소드 내부에서 Driver에서 구현했던 모든 코드를 구현
+        - GenericOptionParser를 이용해서 사용자가 입력한 옵션과 일반옵션을 분리해서 환경설정 정보에 등록되도록 처리
+          - 작업이 완료시 mapper 환경 설정정보에서 값을 꺼내서 사용할수있다.
+      - main메소드에서 run을 실행되도록 호출
+        - run은 직접 호출하지않고 toolTunner클래스 실행될 메소드로 run을 등록해야 한다.
+        - 스케줄러에 의해 호출된다.
+    
+    - Multiple outputs
+      - 한 개의 입력 데이터를 이용해서 여러 개의 output을 만들고 싶은경우 활용
+        - Mapper 
+          - GenericOptionParsar작업과 동일하게 map메소드를 구성하고 구분할 수 있도록 key의 각 상황별 문자추가
+        - Reducer
+          - Mapper에서 넘겨준 데이터에서 구분자를 기준으로 분리해서 합산
+          - 개별 output이 생성될 수 있도록 처리
+            - setup
+              - reducer객체가 처음 실행 될때 한번 호출 되는 메소드pl
+              - multipleoutputs객체 생성
+            - reduce
+              - 위와 동일
+              - 각 상황별로 write를 호출해서 출력 될 수 있도록 처리
+              - up,down, equal 작업(stock multi예제)
+            - cleanUp
+              - reducer의 작업이 종료될때 한번 호출 되는 메소드
+              - multipleoutputs객체를 반드시 해제
+        - Driver
+          - multipleoutputs로 출력될 경로를 path에 설정
+          - prefix로 구분문자열을 정의
   - hadoop eco system 설치 후 테스트
     - flume
     - sqoop
