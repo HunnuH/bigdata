@@ -197,6 +197,24 @@
             - 복합키 비교기(복합키에 정의한 모든 기준을 비교 검토할 수 있도록 처리)
           - 리듀서
           - 드라이버
+  - 정규표현식
+    - 텍스트안에서 특정 형식의 문자열을 추출하거나 검색할때 사용하는 특수문자로 만들어진 패턴
+    - 자바API
+      - String class의 matches메소드
+        - 매개변수로 전달한 정규표현식에 일치하는 문자열의 유무를 boolean으로 return
+      - java.util.regex packge의 클래스를 활용
+        - pattern class
+          - 패턴을 정의 하고 작업할 수 있도록 Matcher class를  만들어내는 기능
+          - compile() : 정규표현식을 인식시켜서 패턴객체를 생성
+            - pattern.CASE.INSENSTIVE : 대소문자를 적용하지 않는다는 의미
+          - matcher() : compile된 패턴과 문자열을 매칭시켜서 적용할 수 있는 matcher class 생성
+        - Matcher
+          - 패턴과 일치하는 문자열을 관리하는 클래스
+          - find() : 패턴에 일치하는 문자열이 있는지 찾기(true or false return)
+          - start() : 패턴과 일치하는 문자열의 start index
+            - 여러개가 있으면 첫 번째 찾은 문자열의 시작index
+          - end() : 패턴과 일치하는 문자열의 end index
+          - group() : 패턴과 일치하는 문자열을 리턴(일치하는 문자를 추출)
   - hadoop eco system 설치 후 테스트
     - flume
     - sqoop
