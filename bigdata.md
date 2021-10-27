@@ -215,11 +215,75 @@
             - 여러개가 있으면 첫 번째 찾은 문자열의 시작index
           - end() : 패턴과 일치하는 문자열의 end index
           - group() : 패턴과 일치하는 문자열을 리턴(일치하는 문자를 추출)
-  - hadoop eco system 설치 후 테스트
-    - flume
-    - sqoop
-    - hive
-    - pig
-    - mahout
-  
-  
+
+------
+
+### flume
+
+- 데이터수집을 위한 프로그램
+- 시스템로그, 파일, 웹서버로그,클릭로그와 같은 비정형데이터를 HDFS에 적재할 수 있도록 지원하는 프로그램
+- 종류 - flume, chukwa, scribe, fluentd, splunk
+- 구성요소
+  - source : 데이터가 유입되는 지점(어떤 방식으로 유입되는지 명시)
+    - flume을 통해 전송할 데이터의 소스
+    - 종류 - avro, netcat, exec, spooldir, thirft, JMS
+      - netcat : TCP로 수집(telbet처럼 데이터 전송)
+      - JMS : 메세지를 통해 수집
+  - channel : 최종목적지로 데이터를 보내기 위해 데이터를 보관하는곳
+    - source와 sink사이의 연결
+    - 데이터를 버퍼링하는 컴포넌트
+    - 메모리, 파일, 데이터베이스 채널 이용하여 저장
+  - sink : 데이터가 보내질 최종 목적지
+    - 종류 : logger, avrom hdfs, hbase, elasticsearch, file_roll, thrift
+      - logger : 로그로 기록(콘솔)
+- 실행명령어
+  - `flume-ng agent --conf conf --conf-file 설정파일명 --name agent명 `
+    - --conf(-c)  : 설정파일이 있는 폴더명(현재 경로에 따라 다르게 지정)
+    - --conf-file(-f) : 설정파일명 (경로를 정확하게 명시) 
+    - --name(-n) : agent명 (myConsole) 
+- telnet테스트
+  - flume을 실행
+  - 새로운 터미넣에서 telnet을 실행한 후 작업하기
+  - telnet이 설치되어 있지 않으면 root계정으로 이동해서 설치
+    - yum install telnet
+    - systemctl start telnet.coket(서버 서비스 시작)
+    - systemctl status telnet.coket(상태확인 - active상태, 23번포트 확인)
+- 폴더에 저장된 타일을 읽어서 폴더로 저장
+  - input/output폴더 생성
+  - 설정파일 만들기
+    - source : 폴더에 저장된 파일을 이동시킬 것이므로 
+      - type : spoolDir 
+      - 타입이 저장된 디렉토리 -  타입명은 log파일이 저장된 경우 timestamp와 같은 식별자로 저장 되도록 설정
+    - sink : 다른 폴더의 파일로 저장
+      - type : file_roll
+      - sink.directory : 저장할 디렉토리 위치 명시
+      - sink.rollinterval : 기본값 30, 30초마다 파일이 rolling된다 
+        - 0으로 지정시 파일 롤링이 일어나지 않아서 이벤트가 하나의 파일로 저장
+    - channel
+  - 폴더에 저장된 파일을 읽어서 하둡의 HDFS에 저장
+    - source 
+      - type : spoolDir
+    - sink
+      - type : hdfs
+      - hdfs.path = 저장할 hdfs경로
+        - hdfs://namenode정보/flume/output
+          - namenode의 호스트명 or 주소 , port정보
+          - flurme/output : hdfs상의 path
+          - hdfs.fileType = DaraStream
+          - hdfs.writeFormat = text
+          - callTimeout = 15000(대기시간)
+          - hdfs.batchSize : 한번에 처리할 이벤트수
+          - hdfs.useLocalTimeStamp : true로 하면 현재 날짜를 변수처럼 사용할수있다
+            - hdfs://hadoop01:9000/tomcat/log/%Y/%m/%d
+    - shell실행명령어를 이용해서 hdfs적재
+      - source
+        - type : exec
+        - shell=/bin/bash -c
+        - command=shell명령어
+    - WAS에서 hadoop의 namenode로 전송
+      - 머신 >> 머신
+      - hadoop02에 was설치
+      - was에 웹프로젝트를 배포
+      - namenode로 전송
+
+ 
